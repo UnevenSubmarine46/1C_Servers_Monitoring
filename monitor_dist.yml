@@ -1,0 +1,23 @@
+---
+- name: Install monotor script on the remote 1c server
+  hosts: all
+  become: yes
+
+
+  tasks:
+   - name: Copy .sh file on the remote server
+     copy:
+      src: /ansible/filials_monitor/resources/ans_monitor.sh
+      dest: /scripts
+      mode: 0777
+
+   - name: Create the current directory on the remote 1c server
+     file:
+      path: /srv/Panel/http/cache
+      state: directory
+      mode: '0775'
+
+
+   - name: Make new CronJob for the monitoring
+     shell:
+      cmd: echo "*/1 * * * *  /scripts/ans_monitor.sh > /srv/Panel/http/cache/monitor.txt" >> /var/spool/cron/crontabs/root
